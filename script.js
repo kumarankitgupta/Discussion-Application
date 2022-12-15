@@ -1,4 +1,5 @@
 var Atfirst = true;
+var mode = true;
 var currentId;
 var qid = 0;
 var btn = document.getElementById("btn");
@@ -75,33 +76,38 @@ function back(){
     resarea.setAttribute('style',"display:none");
 }
 function handleResponse(sid,qid){
-    disappear();
     responseContainer.innerHTML = "";
-    var s = sid.textContent;
-    var q = qid.textContent;
-    sh.textContent = s;
-    qh.textContent = q;
-    console.log(s + " " + q);
-    currentId = ReturnId(s);
-    console.log(currentId);
+    if(mode){
+        disappear();
+        var s = sid.textContent;
+        var q = qid.textContent;
+        sh.textContent = s;
+        qh.textContent = q;
+        console.log(s + " " + q);
+        currentId = ReturnId(s);
+        console.log(currentId);
+    }
     var ob  = localStorage.getItem('item'+currentId);
     console.log(ob);
     var sob = JSON.parse(ob);
     var arr = sob.responses;
     for(let i = 0 ; i < arr.length ; i++){
-        createResponse(arr[i].name,arr[i].comment);
+        createResponse(arr[i].name,arr[i].comment,arr[i].uvote,arr[i].dvote,i);
     }
 }
 sbtn.addEventListener('click',()=>{
     console.log("Working");
     var name = sname.value;
     var comment = scomment.value;
-    createResponse(name,comment);
-    saveResponse(name,comment);
+    saveResponse(name,comment,0,0);
+    mode = false;
+    handleResponse();
+    mode = true;
+    // createResponse(name,comment,0,0);
     sname.value = "";
     scomment.value = "";
 })
-function createResponse(name,comment){
+function createResponse(name,comment,like,dislike,i){
     var di = document.createElement("div");
     di.setAttribute("class","rqcontainer");
     di.setAttribute("style","border-bottom :1px solid #ccd1cf")
@@ -109,8 +115,26 @@ function createResponse(name,comment){
     h4.textContent = name;
     var p = document.createElement("p");
     p.textContent = comment;
+    var i1 = document.createElement("i");
+    i1.setAttribute("class","fa-solid fa-thumbs-up");
+    i1.setAttribute("style","font-size: 25px; margin-left: 5px;")
+    i1.setAttribute("onclick","upvote("+i+",il"+currentId+""+i+")");
+    s1 = document.createElement("span");
+    s1.textContent = like;
+    s1.setAttribute("id","il"+currentId+''+i);
+    var i2 = document.createElement("i");
+    i2.setAttribute("style","font-size: 25px; margin-left: 5px;")
+    i2.setAttribute("class","fa-solid fa-thumbs-down");
+    i2.setAttribute("onclick","downvote("+i+",id"+currentId+""+i+")");
+    s2 = document.createElement("span");
+    s2.textContent = dislike;
+    s2.setAttribute("id","id"+currentId+''+i);
     di.appendChild(h4);
     di.appendChild(p);
+    di.appendChild(i1);
+    di.appendChild(s1);
+    di.appendChild(i2);
+    di.appendChild(s2);
     responseContainer.appendChild(di);
 }
 
@@ -126,10 +150,12 @@ function ReturnId(s){
     })
     return id;
 }
-function saveResponse(name,comment){
+function saveResponse(name,comment,l,d){
     var res = {}
     res.name = name;
     res.comment = comment;
+    res.uvote = l;
+    res.dvote = d;
     var ob  = localStorage.getItem('item'+currentId);
     var sob = JSON.parse(ob);
     sob.responses.push(res);
@@ -163,4 +189,30 @@ function SearchQuestions(){
         hide.style.display = "";
     }
     console.log(counter);
+}
+function upvote(i,id){
+    var ob  = localStorage.getItem('item'+currentId);
+    console.log(ob);
+    console.log(i);
+    var sob = JSON.parse(ob);
+    var arr = sob.responses;
+    console.log(arr[i]);
+    var x = arr[i].uvote;
+    arr[i].uvote = x+1;
+    id.innerHTML = x+1;
+    var nob = JSON.stringify(sob);
+    console.log(nob);
+    localStorage.setItem('item'+currentId,nob);
+}
+function downvote(i,id){
+    var ob  = localStorage.getItem('item'+currentId);
+    var sob = JSON.parse(ob);
+    var arr = sob.responses;
+    console.log(arr[i]);
+    var x = arr[i].dvote;
+    arr[i].dvote = x+1;
+    id.innerHTML = x+1;
+    var nob = JSON.stringify(sob);
+    console.log(nob);
+    localStorage.setItem('item'+currentId,nob);
 }
