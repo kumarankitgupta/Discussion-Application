@@ -1,7 +1,3 @@
-var Atfirst = true;
-var mode = true;
-var currentId;
-var qid = 0;
 var btn = document.getElementById("btn");
 var sub = document.getElementById("sub");
 var ques = document.getElementById("ques");
@@ -17,6 +13,10 @@ var responseContainer = document.getElementById("responseContainer");
 var rslbtn = document.getElementById("rslbtn");
 var hide = document.getElementById("hide");
 var store = false;
+var Atfirst = true;
+var mode = true;
+var currentId;
+var qid = 0;
 var keysInLs = Object.keys(localStorage);
 console.log(keysInLs);
 function loadPreviousData(){
@@ -88,10 +88,12 @@ function handleResponse(sid,qid){
         console.log(currentId);
     }
     var ob  = localStorage.getItem('item'+currentId);
-    console.log(ob);
+    iWillCreate(ob);
+}
+function iWillCreate(ob){
     var sob = JSON.parse(ob);
     var arr = sob.responses;
-    for(let i = 0 ; i < arr.length ; i++){
+    for(let i = arr.length -1 ; i >= 0 ; i--){
         createResponse(arr[i].name,arr[i].comment,arr[i].uvote,arr[i].dvote,i);
     }
 }
@@ -188,21 +190,22 @@ function SearchQuestions(){
     if(counter === qusArray.length){
         hide.style.display = "";
     }
-    console.log(counter);
+
 }
 function upvote(i,id){
     var ob  = localStorage.getItem('item'+currentId);
-    console.log(ob);
-    console.log(i);
     var sob = JSON.parse(ob);
     var arr = sob.responses;
-    console.log(arr[i]);
     var x = arr[i].uvote;
     arr[i].uvote = x+1;
-    id.innerHTML = x+1;
+    sob.responses.sort((a,b)=>{
+        return a.uvote - b.uvote;
+    })
     var nob = JSON.stringify(sob);
-    console.log(nob);
     localStorage.setItem('item'+currentId,nob);
+    console.log(nob);
+    responseContainer.innerHTML = "";
+    iWillCreate(nob);
 }
 function downvote(i,id){
     var ob  = localStorage.getItem('item'+currentId);
@@ -213,6 +216,5 @@ function downvote(i,id){
     arr[i].dvote = x+1;
     id.innerHTML = x+1;
     var nob = JSON.stringify(sob);
-    console.log(nob);
     localStorage.setItem('item'+currentId,nob);
 }
