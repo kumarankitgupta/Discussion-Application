@@ -31,11 +31,18 @@ function loadPreviousData(){
 }
 loadPreviousData();
 btn.addEventListener('click',()=>{
+    var insert = true;
     var subject = sub.value;
     var question = ques.value;
+   if(subject.trim().length === 0 || question.trim().length === 0){
+       alert("Subject And Question Should Not Be Empty");
+       insert = false;
+   }
+    if(insert){
     createQuestion(subject,question);
     sub.value = "";
     ques.value = "";
+    }
 })
 function createQuestion(subject,question){
     var x = String(qid);
@@ -98,9 +105,15 @@ function iWillCreate(ob){
     }
 }
 sbtn.addEventListener('click',()=>{
+    var insert = true;
     console.log("Working");
     var name = sname.value;
     var comment = scomment.value;
+    if(name.trim().length === 0 || comment.trim().length === 0){
+        alert("Name And Comment Should Not Be Empty");
+        insert = false;
+    }
+    if(insert){
     saveResponse(name,comment,0,0);
     mode = false;
     handleResponse();
@@ -108,7 +121,7 @@ sbtn.addEventListener('click',()=>{
     // createResponse(name,comment,0,0);
     sname.value = "";
     scomment.value = "";
-})
+}})
 function createResponse(name,comment,like,dislike,i){
     var di = document.createElement("div");
     di.setAttribute("class","rqcontainer");
