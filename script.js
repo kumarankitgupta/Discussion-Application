@@ -57,6 +57,7 @@ function createQuestion(subject,question){
     var p = document.createElement("p");
     p.setAttribute("id","qid"+qid)
     p.textContent = question;
+    p.setAttribute("class","onlyqs")
     d.appendChild(h2);
     d.appendChild(p);
     qholder.appendChild(d);
@@ -79,6 +80,8 @@ function disappear(){
     resarea.setAttribute('style',"display:block");
 }
 function back(){
+    sub.value = "";
+    ques.value = "";
     qarea.setAttribute('style',"display:block;");
     resarea.setAttribute('style',"display:none");
 }
@@ -187,13 +190,18 @@ function SearchQuestions(){
     hide.style.display = "none";
     var qusArray = document.getElementsByClassName("questions");
     var onlyq = document.getElementsByClassName("onlyq");
+    var onlyqs = document.getElementsByClassName("onlyqs");
     var sbox = document.getElementById("searchinp");
     var text = sbox.value;
     var stext = text.toUpperCase();
     for(let i = 0 ; i < onlyq.length ; i++){
         var temp = onlyq[i].textContent;
         temp = temp.toUpperCase();
-        if(temp.indexOf(stext) > -1){
+        //
+        var tempx = onlyqs[i].textContent;
+        tempx = tempx.toUpperCase();
+        //
+        if(temp.indexOf(stext) > -1 || tempx.indexOf(stext) > -1){
             qusArray[i].style.display="";
         }else{
             qusArray[i].style.display="none";
