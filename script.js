@@ -25,7 +25,8 @@ function loadPreviousData(){
         var rob = JSON.parse(ob);
         var s = rob.subject;
         var q = rob.question;
-        createQuestion(s,q);
+        var ds = rob.CreatedAt;
+        createQuestion(s,q,ds);
     })
     store = true;
 }
@@ -34,17 +35,33 @@ btn.addEventListener('click',()=>{
     var insert = true;
     var subject = sub.value;
     var question = ques.value;
+    var date = new Date()
    if(subject.trim().length === 0 || question.trim().length === 0){
        alert("Subject And Question Should Not Be Empty");
        insert = false;
    }
     if(insert){
-    createQuestion(subject,question);
+        store = true;
+    createQuestion(subject,question,date);
     sub.value = "";
     ques.value = "";
     }
 })
-function createQuestion(subject,question){
+function righttime(olddate){
+    var ndate = new Date();
+    var old = new Date(olddate);
+    var t = ndate.getTime() - old.getTime();
+    var sec = t/1000;
+    if(sec < 60){
+        return "updated few seconds ago";
+    }
+    if(sec > 60 &&  sec < 3600){
+        return "updated "+parseInt(sec/60)+" minutes ago";
+    }
+    return t;
+}
+function createQuestion(subject,question,caldate){
+    
     var x = String(qid);
     var d = document.createElement("div");
     d.setAttribute('class','questions');
@@ -58,20 +75,28 @@ function createQuestion(subject,question){
     p.setAttribute("id","qid"+qid)
     p.textContent = question;
     p.setAttribute("class","onlyqs")
+    var dts = document.createElement("p");
+    var xyz = righttime(caldate);
+    dts.innerText = xyz;
+    dts.setAttribute("id","time"+qid);
     d.appendChild(h2);
     d.appendChild(p);
+    d.appendChild(dts);
     qholder.appendChild(d);
     if(store){
-    storeTheData(subject,question)
+    storeTheData(subject,question);
     }
     qid++;
 }
 function storeTheData(subject,question){
+    var dt = new Date().toISOString();
+    s = dt;
     qinfo = {};
     qinfo.id = qid;
     qinfo.subject = subject;
     qinfo.question = question;
     qinfo.responses = [];
+    qinfo.CreatedAt = s;
     var val = JSON.stringify(qinfo);
     localStorage.setItem("item"+qid,val);
 }
@@ -239,3 +264,17 @@ function downvote(i,id){
     var nob = JSON.stringify(sob);
     localStorage.setItem('item'+currentId,nob);
 }
+setInterval(()=>{
+    store = false;
+    qholder.innerHTML="";
+    var keyInLs = Object.keys(localStorage);
+    keyInLs.forEach((keys)=>{
+        var ob = localStorage.getItem(keys);
+        var rob = JSON.parse(ob);
+        var s = rob.subject;
+        var q = rob.question;
+        var ds = rob.CreatedAt;
+        createQuestion(s,q,ds);
+    })
+},10000);
+// function update
