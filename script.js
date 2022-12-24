@@ -53,12 +53,14 @@ function righttime(olddate){
     var t = ndate.getTime() - old.getTime();
     var sec = t/1000;
     if(sec < 60){
-        return "updated few seconds ago";
+        return "Created few Second ago";
     }
     if(sec > 60 &&  sec < 3600){
-        return "updated "+parseInt(sec/60)+" minutes ago";
+        return "created "+parseInt(sec/60)+" minutes ago";
     }
-    return t;
+    if(sec > 3600 && sec < 3600*24){
+        return "created "+parseInt(sec/3600)+" hours ago";
+    }
 }
 function createQuestion(subject,question,caldate){
     
@@ -276,5 +278,5 @@ setInterval(()=>{
         var ds = rob.CreatedAt;
         createQuestion(s,q,ds);
     })
-},10000);
+},60000);
 // function update
