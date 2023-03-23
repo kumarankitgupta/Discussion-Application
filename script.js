@@ -21,12 +21,14 @@ var keysInLs = Object.keys(localStorage);
 console.log(keysInLs);
 function loadPreviousData(){
     keysInLs.forEach((keys)=>{
+        if(keys.substring(0,4) === "item"){
         var ob = localStorage.getItem(keys);
         var rob = JSON.parse(ob);
         var s = rob.subject;
         var q = rob.question;
         var ds = rob.CreatedAt;
         createQuestion(s,q,ds);
+    }
     })
     store = true;
 }
